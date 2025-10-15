@@ -474,6 +474,45 @@ describe('Pool Monitor Card', () => {
 
         expect(resultNoOverride.value).toBe(25); // utilise la valeur du capteur
       });
+
+      it('should handle display precision config when present', () => {
+        const card = new PoolMonitorCard();
+        const now = new Date();
+        card.hass = {
+          states: {
+            'sensor.test': {
+              state: '25.12345678912',
+              last_updated: now.toISOString()
+            }
+          },
+          entities: {
+            'sensor.test': {
+              display_precision: '2'
+            }
+          }
+        };
+        card.config = {
+          display: {
+            show_icons: false,
+            show_last_updated: true,
+            language: 'en'
+          },
+          colors: {}
+        };
+
+        const result = card.calculateData(
+          'test',
+          'Test',
+          'sensor.test',
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          '°C'
+        );
+
+        expect(result.value).toBe(25.12);
+      });
     });
 
     describe('countDecimals', () => {

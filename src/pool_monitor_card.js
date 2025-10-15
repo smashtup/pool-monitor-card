@@ -225,10 +225,11 @@ export class PoolMonitorCard extends LitElement {
       return newData;
     }
 
+    const entityDetails = this.hass?.entities ? this.hass.entities[entity] : {};
     const entityState = this.hass.states[entity];
-    // Get the configured precision from the entity's attributes
-    const precision = entityState.attributes?.display_precision ?? 
-                     entityState.attributes?.precision ?? 
+    
+    // Display Precision is managed on the entity itself in HA not in the attributes
+    const precision = entityDetails?.display_precision ??
                      this.countDecimals(parseFloat(entityState.state));
     
     // Parse and format the value with the configured precision
