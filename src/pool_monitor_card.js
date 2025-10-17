@@ -218,14 +218,14 @@ export class PoolMonitorCard extends LitElement {
     }
 
     // Vérifier si l'entité existe
-    if (!this.hass || !this.hass.states || !this.hass.states[entity]) {
+    if (!isEntityStatePresent(this.hass, entity)) {
       console.warn(`Entity not found: ${entity}`);
       newData.value = null;
       newData.entity = entity;
       return newData;
     }
 
-    const entityDetails = this.hass?.entities ? this.hass.entities[entity] : {};
+    const entityDetails = getEntityDetails(this.hass, entity);
     const entityState = this.hass.states[entity];
     
     // Display Precision is managed on the entity itself in HA not in the attributes
@@ -403,6 +403,21 @@ export class PoolMonitorCard extends LitElement {
         : parseFloat(newData.pct_max) - 2;
 
     return newData;
+
+    function isEntityStatePresent(hass, entity) {
+      return hass && hass.states && hass.states[entity];
+    }
+
+    function isEntityDetailPresent(hass, entity) {
+      return hass && hass.entities && hass.entities[entity];
+    }
+
+    function getEntityDetails(hass, entity) {
+      if ( isEntityDetailPresent(hass, entity)) {
+        return hass.entities[entity]
+      }
+      return {};
+    }
   }
 
   /**
